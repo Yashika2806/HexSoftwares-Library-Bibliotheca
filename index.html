@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bibliotheca — The Digital Library</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- BACKGROUND CANVAS -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- ==================== AUTH SECTION ==================== -->
+  <div id="authSection" class="section active">
+    <div class="auth-overlay">
+      <div class="auth-brand">
+        <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+        <h1 class="brand-name">Bibliotheca</h1>
+        <p class="brand-tagline">Where Every Page Tells a Story</p>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm" class="auth-card active">
+        <h2>Welcome Back, Reader</h2>
+        <p class="auth-sub">Sign in to your library</p>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="loginEmail" placeholder="reader@library.com" />
+          <span class="form-error" id="loginEmailErr"></span>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="loginPassword" placeholder="Your password" />
+            <button class="pw-toggle" onclick="togglePw('loginPassword',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <span class="form-error" id="loginPassErr"></span>
+        </div>
+        <div class="form-row">
+          <label class="checkbox-label"><input type="checkbox" id="rememberMe"/> Remember me</label>
+          <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+        <button class="btn-primary" onclick="handleLogin()">
+          <span>Sign In</span><i class="fas fa-arrow-right"></i>
+        </button>
+        <div class="auth-divider"><span>or</span></div>
+        <div class="social-btns">
+          <button class="btn-social"><i class="fab fa-google"></i> Google</button>
+          <button class="btn-social"><i class="fab fa-facebook-f"></i> Facebook</button>
+        </div>
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuth('signup')">Create one</a></p>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" class="auth-card">
+        <h2>Join Bibliotheca</h2>
+        <p class="auth-sub">Create your reader's account</p>
+        <div class="form-row-two">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> First Name</label>
+            <input type="text" id="signupFirst" placeholder="John" />
+            <span class="form-error" id="firstErr"></span>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Last Name</label>
+            <input type="text" id="signupLast" placeholder="Doe" />
+            <span class="form-error" id="lastErr"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="signupEmail" placeholder="john.doe@email.com" />
+          <span class="form-error" id="signupEmailErr"></span>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-phone"></i> Phone Number</label>
+          <input type="tel" id="signupPhone" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-calendar"></i> Date of Birth</label>
+          <input type="date" id="signupDob" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-book"></i> Favourite Genre</label>
+          <select id="signupGenre">
+            <option value="">Select a genre...</option>
+            <option>Fiction</option><option>Non-Fiction</option><option>Mystery & Thriller</option>
+            <option>Science Fiction</option><option>Fantasy</option><option>Biography</option>
+            <option>History</option><option>Self-Help</option><option>Romance</option><option>Horror</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="signupPassword" placeholder="Create a strong password" />
+            <button class="pw-toggle" onclick="togglePw('signupPassword',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="pw-strength" id="pwStrength"></div>
+          <span class="form-error" id="signupPassErr"></span>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Confirm Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="signupConfirm" placeholder="Repeat your password" />
+            <button class="pw-toggle" onclick="togglePw('signupConfirm',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <span class="form-error" id="confirmErr"></span>
+        </div>
+        <label class="checkbox-label terms-check">
+          <input type="checkbox" id="agreeTerms"/>
+          I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+        </label>
+        <button class="btn-primary" onclick="handleSignup()">
+          <span>Create Account</span><i class="fas fa-arrow-right"></i>
+        </button>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuth('login')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUCCESS SECTION ==================== -->
+  <div id="successSection" class="section">
+    <div class="success-container">
+      <div class="success-ring">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+      </div>
+      <div class="success-sparkles" id="sparkles"></div>
+      <h1 id="successTitle">Successfully Logged In!</h1>
+      <p id="successMsg">Welcome back to Bibliotheca. Your reading adventure awaits.</p>
+      <div class="success-progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <p class="redirect-text">Redirecting to your library...</p>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN SECTION ==================== -->
+  <div id="mainSection" class="section">
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-brand">
+        <i class="fas fa-book-open"></i>
+        <span>Bibliotheca</span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#" onclick="showPage('home')" class="nav-link active" data-page="home"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#" onclick="showPage('browse')" class="nav-link" data-page="browse"><i class="fas fa-th-large"></i> Browse</a></li>
+        <li><a href="#" onclick="showPage('mybooks')" class="nav-link" data-page="mybooks"><i class="fas fa-bookmark"></i> My Books</a></li>
+        <li><a href="#" onclick="showPage('reading')" class="nav-link" data-page="reading"><i class="fas fa-glasses"></i> Currently Reading</a></li>
+        <li><a href="#" onclick="showPage('reviews')" class="nav-link" data-page="reviews"><i class="fas fa-star"></i> Reviews</a></li>
+        <li><a href="#" onclick="showPage('events')" class="nav-link" data-page="events"><i class="fas fa-calendar-alt"></i> Events</a></li>
+        <li><a href="#" onclick="showPage('about')" class="nav-link" data-page="about"><i class="fas fa-info-circle"></i> About</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="nav-search-mini">
+          <input type="text" id="navSearchInput" placeholder="Quick search..." onkeydown="if(event.key==='Enter'){doNavSearch()}"/>
+          <button onclick="doNavSearch()"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="nav-user" onclick="toggleUserMenu()">
+          <div class="user-avatar" id="userAvatar">J</div>
+          <span id="navUsername">John</span>
+          <i class="fas fa-chevron-down"></i>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="#" onclick="showPage('profile')"><i class="fas fa-user"></i> My Profile</a>
+            <a href="#" onclick="showPage('wishlist')"><i class="fas fa-heart"></i> Wishlist</a>
+            <a href="#" onclick="showPage('history')"><i class="fas fa-history"></i> Reading History</a>
+            <a href="#" onclick="showPage('settings')"><i class="fas fa-cog"></i> Settings</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" onclick="logout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- PAGE: HOME -->
+    <div id="page-home" class="page active">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-content">
+          <p class="hero-eyebrow"><i class="fas fa-sparkles"></i> Your Personal Library</p>
+          <h1 class="hero-title">Welcome, <span id="heroUsername" class="hero-name">Reader</span></h1>
+          <h2 class="hero-subtitle">Explore Thousands of Stories</h2>
+          <p class="hero-desc">Discover, borrow, and immerse yourself in a world of books. From timeless classics to contemporary bestsellers — your next great read is just a search away.</p>
+          <div class="hero-search">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="heroSearch" placeholder="Search by title, author, genre, ISBN..." />
+              <select id="heroSearchType">
+                <option value="all">All</option>
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+                <option value="genre">Genre</option>
+                <option value="isbn">ISBN</option>
+              </select>
+              <button onclick="doHeroSearch()">Search</button>
+            </div>
+          </div>
+          <div class="hero-tags">
+            <span onclick="quickSearch('Fiction')">Fiction</span>
+            <span onclick="quickSearch('Mystery')">Mystery</span>
+            <span onclick="quickSearch('Sci-Fi')">Sci-Fi</span>
+            <span onclick="quickSearch('Biography')">Biography</span>
+            <span onclick="quickSearch('Fantasy')">Fantasy</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card"><div class="stat-num">50,000+</div><div class="stat-lbl">Books Available</div></div>
+          <div class="stat-card"><div class="stat-num">12,000+</div><div class="stat-lbl">Active Members</div></div>
+          <div class="stat-card"><div class="stat-num">200+</div><div class="stat-lbl">Genres</div></div>
+          <div class="stat-card"><div class="stat-num">98%</div><div class="stat-lbl">Satisfaction</div></div>
+        </div>
+      </section>
+
+      <!-- FEATURED BOOKS CAROUSEL -->
+      <section class="section-container">
+        <div class="section-header">
+          <h2 class="section-title"><span class="gold-line"></span> Featured Books</h2>
+          <a href="#" onclick="showPage('browse')" class="see-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="books-carousel" id="featuredBooks"></div>
+      </section>
+
+      <!-- GENRE CATEGORIES -->
+      <section class="section-container dark-section">
+        <div class="section-header">
+          <h2 class="section-title light"><span class="gold-line"></span> Browse by Genre</h2>
+        </div>
+        <div class="genre-grid" id="genreGrid"></div>
+      </section>
+
+      <!-- NEW ARRIVALS -->
+      <section class="section-container">
+        <div class="section-header">
+          <h2 class="section-title"><span class="gold-line"></span> New Arrivals</h2>
+          <a href="#" onclick="showPage('browse')" class="see-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="books-carousel" id="newArrivals"></div>
+      </section>
+
+      <!-- BORROW/RETURN STATUS BANNER -->
+      <section class="section-container">
+        <div class="status-banner">
+          <div class="status-item">
+            <i class="fas fa-book-reader"></i>
+            <div><strong id="booksReadCount">0</strong><span>Books Read</span></div>
+          </div>
+          <div class="status-item">
+            <i class="fas fa-clock"></i>
+            <div><strong id="booksDueCount">0</strong><span>Due This Week</span></div>
+          </div>
+          <div class="status-item">
+            <i class="fas fa-heart"></i>
+            <div><strong id="wishlistCount">0</strong><span>Wishlist</span></div>
+          </div>
+          <div class="status-item">
+            <i class="fas fa-star"></i>
+            <div><strong id="reviewsCount">0</strong><span>Reviews Given</span></div>
+          </div>
+          <button class="btn-secondary" onclick="showPage('mybooks')">View My Dashboard</button>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+      <section class="section-container dark-section">
+        <div class="section-header">
+          <h2 class="section-title light"><span class="gold-line"></span> Library Announcements</h2>
+        </div>
+        <div class="announcements-grid" id="announcementsGrid"></div>
+      </section>
+
+      <!-- TESTIMONIALS -->
+      <section class="section-container">
+        <div class="section-header">
+          <h2 class="section-title"><span class="gold-line"></span> What Readers Say</h2>
+        </div>
+        <div class="testimonials-row" id="testimonialsRow"></div>
+      </section>
+    </div>
+
+    <!-- PAGE: BROWSE -->
+    <div id="page-browse" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-th-large"></i> Browse Books</h1>
+        <p>Explore our entire collection — filter, sort, and find your next favourite.</p>
+      </div>
+      <div class="browse-layout">
+        <aside class="browse-sidebar">
+          <h3>Filter Books</h3>
+          <div class="filter-group">
+            <label>Genre</label>
+            <select id="filterGenre" onchange="applyFilters()">
+              <option value="">All Genres</option>
+              <option>Fiction</option><option>Non-Fiction</option><option>Mystery</option>
+              <option>Sci-Fi</option><option>Fantasy</option><option>Biography</option>
+              <option>History</option><option>Self-Help</option><option>Romance</option><option>Horror</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Availability</label>
+            <label class="checkbox-label"><input type="radio" name="avail" value="" onchange="applyFilters()" checked/> All</label>
+            <label class="checkbox-label"><input type="radio" name="avail" value="available" onchange="applyFilters()"/> Available</label>
+            <label class="checkbox-label"><input type="radio" name="avail" value="borrowed" onchange="applyFilters()"/> Borrowed</label>
+          </div>
+          <div class="filter-group">
+            <label>Rating</label>
+            <select id="filterRating" onchange="applyFilters()">
+              <option value="">Any Rating</option>
+              <option value="4">4★ & above</option>
+              <option value="3">3★ & above</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Sort By</label>
+            <select id="sortBy" onchange="applyFilters()">
+              <option value="title">Title (A–Z)</option>
+              <option value="rating">Highest Rated</option>
+              <option value="newest">Newest First</option>
+              <option value="popular">Most Popular</option>
+            </select>
+          </div>
+          <button class="btn-secondary small" onclick="clearFilters()">Clear Filters</button>
+        </aside>
+        <div class="browse-main">
+          <div class="browse-topbar">
+            <div class="search-inline">
+              <i class="fas fa-search"></i>
+              <input type="text" id="browseSearch" placeholder="Search within results..." oninput="applyFilters()"/>
+            </div>
+            <div class="view-toggle">
+              <button id="gridViewBtn" class="view-btn active" onclick="setView('grid')"><i class="fas fa-th"></i></button>
+              <button id="listViewBtn" class="view-btn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+            </div>
+            <span id="resultCount" class="result-count">0 books found</span>
+          </div>
+          <div class="books-grid" id="browseGrid"></div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: MY BOOKS -->
+    <div id="page-mybooks" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-bookmark"></i> My Books</h1>
+        <p>Manage your borrowed books, reservations, and reading lists.</p>
+      </div>
+      <div class="mybooks-tabs">
+        <button class="tab-btn active" onclick="switchTab('borrowed',this)">Borrowed (2)</button>
+        <button class="tab-btn" onclick="switchTab('reserved',this)">Reserved (1)</button>
+        <button class="tab-btn" onclick="switchTab('history',this)">History (8)</button>
+        <button class="tab-btn" onclick="switchTab('wishlist',this)">Wishlist (5)</button>
+      </div>
+      <div class="tab-content" id="mybooksContent"></div>
+    </div>
+
+    <!-- PAGE: READING -->
+    <div id="page-reading" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-glasses"></i> Currently Reading</h1>
+        <p>Track your reading progress and manage your reading sessions.</p>
+      </div>
+      <div id="currentReadingContent"></div>
+    </div>
+
+    <!-- PAGE: REVIEWS -->
+    <div id="page-reviews" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-star"></i> Book Reviews</h1>
+        <p>Share your thoughts and discover what others are reading.</p>
+      </div>
+      <div id="reviewsContent"></div>
+    </div>
+
+    <!-- PAGE: EVENTS -->
+    <div id="page-events" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-calendar-alt"></i> Library Events</h1>
+        <p>Book clubs, author talks, reading workshops & more.</p>
+      </div>
+      <div id="eventsContent"></div>
+    </div>
+
+    <!-- PAGE: ABOUT -->
+    <div id="page-about" class="page">
+      <div class="about-hero">
+        <h1>About Bibliotheca</h1>
+        <p>A sanctuary for the curious mind since 1985</p>
+      </div>
+      <div class="about-content">
+        <div class="about-block">
+          <h2>Our Story</h2>
+          <p>Bibliotheca was founded in 1985 with a simple dream: to make the joy of reading accessible to everyone. Over four decades, we've grown from a small reading room of 500 books to a digital and physical library housing over 50,000 volumes across every imaginable genre.</p>
+          <p>We believe that books are bridges — between minds, between cultures, between the present and the past. Our mission is to keep those bridges open, welcoming every reader regardless of age, background, or preference.</p>
+        </div>
+        <div class="about-stats-row">
+          <div class="about-stat"><span class="num">1985</span><span>Founded</span></div>
+          <div class="about-stat"><span class="num">50K+</span><span>Books</span></div>
+          <div class="about-stat"><span class="num">12K+</span><span>Members</span></div>
+          <div class="about-stat"><span class="num">40</span><span>Years of Service</span></div>
+        </div>
+        <div class="about-team">
+          <h2>Meet Our Team</h2>
+          <div class="team-grid" id="teamGrid"></div>
+        </div>
+        <div class="about-block contact-block">
+          <h2>Contact Us</h2>
+          <div class="contact-grid">
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i><div><strong>Address</strong><p>42 Literary Lane, Book Quarter, Mumbai 400001</p></div></div>
+            <div class="contact-item"><i class="fas fa-phone"></i><div><strong>Phone</strong><p>+91 22 1234 5678</p></div></div>
+            <div class="contact-item"><i class="fas fa-envelope"></i><div><strong>Email</strong><p>hello@bibliotheca.in</p></div></div>
+            <div class="contact-item"><i class="fas fa-clock"></i><div><strong>Hours</strong><p>Mon–Sat: 9AM – 9PM<br/>Sun: 10AM – 6PM</p></div></div>
+          </div>
+          <div class="contact-form">
+            <h3>Send a Message</h3>
+            <div class="form-row-two">
+              <div class="form-group"><label>Name</label><input type="text" placeholder="Your name"/></div>
+              <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"/></div>
+            </div>
+            <div class="form-group"><label>Subject</label><input type="text" placeholder="How can we help?"/></div>
+            <div class="form-group"><label>Message</label><textarea rows="4" placeholder="Your message..."></textarea></div>
+            <button class="btn-primary" onclick="sendContactMsg()"><span>Send Message</span><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: PROFILE -->
+    <div id="page-profile" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-user"></i> My Profile</h1>
+        <p>Manage your account information and preferences.</p>
+      </div>
+      <div id="profileContent"></div>
+    </div>
+
+    <!-- PAGE: SETTINGS -->
+    <div id="page-settings" class="page">
+      <div class="page-hero">
+        <h1><i class="fas fa-cog"></i> Settings</h1>
+        <p>Customise your Bibliotheca experience.</p>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3><i class="fas fa-bell"></i> Notifications</h3>
+          <label class="toggle-row"><span>Due Date Reminders</span><label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>New Arrivals in My Genre</span><label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Event Announcements</span><label class="toggle"><input type="checkbox"/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Review Replies</span><label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label></label>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-palette"></i> Appearance</h3>
+          <label class="toggle-row"><span>Dark Mode</span><label class="toggle"><input type="checkbox" id="darkToggle" onchange="toggleDark()"/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Large Text</span><label class="toggle"><input type="checkbox"/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Compact View</span><label class="toggle"><input type="checkbox"/><span class="slider"></span></label></label>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-shield-alt"></i> Privacy</h3>
+          <label class="toggle-row"><span>Show My Reading List</span><label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Show My Reviews</span><label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label></label>
+          <label class="toggle-row"><span>Two-Factor Auth</span><label class="toggle"><input type="checkbox"/><span class="slider"></span></label></label>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-language"></i> Preferences</h3>
+          <div class="form-group"><label>Preferred Language</label><select><option>English</option><option>Hindi</option><option>Tamil</option><option>Telugu</option></select></div>
+          <div class="form-group"><label>Preferred Genre</label><select id="prefGenre"><option>Fiction</option><option>Mystery</option><option>Sci-Fi</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK MODAL -->
+    <div id="bookModal" class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-box" id="modalBox">
+        <button class="modal-close" onclick="closeBookModal()"><i class="fas fa-times"></i></button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-icon small"><i class="fas fa-book-open"></i></div>
+          <h3>Bibliotheca</h3>
+          <p>A home for every reader. Explore, discover, and grow through the power of books.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <a href="#" onclick="showPage('home')">Home</a>
+          <a href="#" onclick="showPage('browse')">Browse Books</a>
+          <a href="#" onclick="showPage('events')">Events</a>
+          <a href="#" onclick="showPage('about')">About Us</a>
+        </div>
+        <div class="footer-links">
+          <h4>My Library</h4>
+          <a href="#" onclick="showPage('mybooks')">My Books</a>
+          <a href="#" onclick="showPage('reading')">Currently Reading</a>
+          <a href="#" onclick="showPage('reviews')">My Reviews</a>
+          <a href="#" onclick="showPage('profile')">My Profile</a>
+        </div>
+        <div class="footer-links">
+          <h4>Newsletter</h4>
+          <p>Get weekly book recommendations in your inbox.</p>
+          <div class="newsletter-input">
+            <input type="email" placeholder="your@email.com"/>
+            <button><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Bibliotheca. All rights reserved. Made with <i class="fas fa-heart"></i> for book lovers.</p>
+      </div>
+    </footer>
+  </div><!-- end mainSection -->
+
+  <script src="script.js"></script>
+</body>
+</html>
